@@ -99,11 +99,25 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args) {
                 return _.find(projects, { id: args.id});
             }
+        },
+        tasks: {
+            type: new GraphQLList(TaskType),
+            resolve(parent, args) {
+                // return all tasks
+                return tasks;
+            }
+        },
+        projects: {
+            type: new GraphQLList(ProjectType),
+            resolve(parent, args) {
+                // return all projects
+                return projects;
+            }
         }
     },
 });
 
 // update schema to include root query
 module.exports = new GraphQLSchema({
-  query: RootQuery,
+    query: RootQuery,
 });
