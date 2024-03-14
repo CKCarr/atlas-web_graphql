@@ -8,11 +8,57 @@ const {
     GraphQLInt,
     GraphQLID,
     GraphQLList,
+    GraphQLNonNull,
 } = require('graphql');
-
+// Import lodash
 const _ = require('lodash');
+// Import the Project and Task models
+const Project = require('../models/project');
+const Task = require("../models/task");
 
-// Dummy data
+// Mutation Types For GraphQL API
+const Mutation = new GraphQLObjectType({
+    name: "Mutation",
+    fields: {
+        // field Define the Mutation Type for Projects
+        addProject: {
+            // return type after mutation is done
+            type: ProjectType,
+            args: {
+                title: { type: GraphQLNonNull(GraphQLString) },
+                weight: { type: GraphQLNonNull(GraphQLInt) },
+                description: { type: GraphQLNonNull(GraphQLString) }
+            },
+            resolve(parent, args) {
+                let project = new Project({
+                    title: args.title,
+                    weight: args.weight,
+                    description: args.description
+                });
+                return project.save();
+            }
+        },
+        // field Define the Mutation Type for Tasks
+        addTask: {
+            type: TaskType,
+            args: {
+                title: { type: GraphQLNonNull(GraphQLString) },
+                weight: { type: GraphQLNonNull(GraphQLInt) },
+                description: { type: GraphQLNonNull(GraphQLString) },
+            },
+            resolve(parent, args) {
+                let task = new Task({
+                    title: args.title,
+                    weight: args.weight,
+                    description: args.description
+                });
+                return task.save();
+            }
+        }
+    }
+});
+
+// Dummy data gor GRAPHQI API
 const tasks = [
     {
         id: '1',
