@@ -1,9 +1,9 @@
-import express from 'express';
-import { graphqlHTTP } from 'express-graphql';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import schema from './schema/schema.js';
-dotenv.config();
+// Import necessary modules using CommonJS syntax
+const express = require('express');
+const { graphqlHTTP } = require('express-graphql');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv').config();
+const schema = require('./schema/schema');
 
 const uri = process.env.MONGODB_URI;
 

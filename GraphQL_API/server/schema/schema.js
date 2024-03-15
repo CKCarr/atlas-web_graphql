@@ -1,6 +1,7 @@
 // schema.js
 
 // Import the GraphQL library
+// Import the GraphQL library using CommonJS module syntax
 const {
     GraphQLObjectType,
     GraphQLSchema,
@@ -10,53 +11,9 @@ const {
     GraphQLList,
     GraphQLNonNull,
 } = require('graphql');
-// Import lodash
 const _ = require('lodash');
-// Import the Project and Task models
-const Project = require('../models/project');
-const Task = require("../models/task");
-
-// Mutation Types For GraphQL API
-const Mutation = new GraphQLObjectType({
-    name: "Mutation",
-    fields: {
-        // field Define the Mutation Type for Projects
-        addProject: {
-            // return type after mutation is done
-            type: ProjectType,
-            args: {
-                title: { type: GraphQLNonNull(GraphQLString) },
-                weight: { type: GraphQLNonNull(GraphQLInt) },
-                description: { type: GraphQLNonNull(GraphQLString) }
-            },
-            resolve(parent, args) {
-                let project = new Project({
-                    title: args.title,
-                    weight: args.weight,
-                    description: args.description
-                });
-                return project.save();
-            }
-        },
-        // field Define the Mutation Type for Tasks
-        addTask: {
-            type: TaskType,
-            args: {
-                title: { type: GraphQLNonNull(GraphQLString) },
-                weight: { type: GraphQLNonNull(GraphQLInt) },
-                description: { type: GraphQLNonNull(GraphQLString) },
-            },
-            resolve(parent, args) {
-                let task = new Task({
-                    title: args.title,
-                    weight: args.weight,
-                    description: args.description
-                });
-                return task.save();
-            }
-        }
-    }
-});
+const Project = require('../models/project'); // No need for .js extension
+const Task = require('../models/task');
 
 // Dummy data gor GRAPHQI API
 const tasks = [
@@ -126,6 +83,48 @@ const ProjectType = new GraphQLObjectType({
     }),
 });
 
+// Mutation Types For GraphQL API
+const Mutation = new GraphQLObjectType({
+    name: "Mutation",
+    fields: {
+        // field Define the Mutation Type for Projects
+        addProject: {
+            // return type after mutation is done
+            type: ProjectType,
+            args: {
+                title: { type: GraphQLNonNull(GraphQLString) },
+                weight: { type: GraphQLNonNull(GraphQLInt) },
+                description: { type: GraphQLNonNull(GraphQLString) }
+            },
+            resolve(parent, args) {
+                let project = new Project({
+                    title: args.title,
+                    weight: args.weight,
+                    description: args.description
+                });
+                return project.save();
+            }
+        },
+        // field Define the Mutation Type for Tasks
+        addTask: {
+            type: TaskType,
+            args: {
+                title: { type: GraphQLNonNull(GraphQLString) },
+                weight: { type: GraphQLNonNull(GraphQLInt) },
+                description: { type: GraphQLNonNull(GraphQLString) },
+            },
+            resolve(parent, args) {
+                let task = new Task({
+                    title: args.title,
+                    weight: args.weight,
+                    description: args.description
+                });
+                return task.save();
+            }
+        }
+    }
+});
+
 // Define RootQuery
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -143,27 +142,29 @@ const RootQuery = new GraphQLObjectType({
             type: ProjectType,
             args: { id: { type: GraphQLID } },
             resolve(parent, args) {
-                return _.find(projects, { id: args.id});
+                return Project.findById(args.id);
             }
         },
         tasks: {
             type: new GraphQLList(TaskType),
             resolve(parent, args) {
                 // return all tasks
-                return tasks;
+                return Task.find({});
             }
         },
         projects: {
             type: new GraphQLList(ProjectType),
             resolve(parent, args) {
                 // return all projects
-                return projects;
+                return Project.find({});
             }
         }
     },
 });
 
 // update schema to include root query
+// Export the schema using CommonJS
 module.exports = new GraphQLSchema({
     query: RootQuery,
+    mutation: Mutation,
 });
