@@ -1,4 +1,5 @@
 // Import necessary modules using CommonJS syntax
+const cors = require('cors');
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
 const mongoose = require('mongoose');
@@ -14,6 +15,8 @@ mongoose.connection.once('open', () => {
 });
 
 const app = express();
+// allow cross-origin requests from server to client (localhost:3000)
+app.use(cors());
 
 app.use('/graphql', graphqlHTTP({
   schema,
